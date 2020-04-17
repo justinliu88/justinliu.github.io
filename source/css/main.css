@@ -13,7 +13,7 @@ html {
 body {
   margin: 0px;
   padding: 0px;
-  background-image: url("./img/service.jpg");
+  background-image: url("../../public/img/service.jpg");
   background-position: top;
   background-repeat: no-repeat;
   background-size: cover;
