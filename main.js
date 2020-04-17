@@ -1,107 +1,95 @@
 $(document).ready(function() {
-    $.ajax({
-        url: "https://justin-course-project.herokuapp.com/course",
-        success: function(courses) {
-            cardFunction(courses);
-        }
-    });
-
-    $.ajax({
-        url: "https://yushi-food-api.herokuapp.com/people",
-        success: function(people) {
-            nameTagFunction(people);
-        }
-    });
-
-    $("#display-forum__result").click(function() {
-        //console.log($("#result-forum").css('display'))
-        if ($("#result-forum").css('display') == "none") {
-            $("#result-forum").slideToggle();
-        };
-
+    $("#container-navbar__burgerIcon").click(function() {
+        navMobileView();
     });
 
     $(document.body).mouseup(function(element) {
-        //console.log($("#result-forum").css('display'))
-        if ($("#result-forum").css('display') == "block") {
-            if (!$(element.target).is("#display-forum__result")) {
-                $("#result-forum").slideToggle("slow");
-            }
+        if ((!$(element.target).hasClass('container-navbar__burgerIcon')) && (!$(element.target).hasClass('container-navbar__options__link'))) {
+            $(".container-navbar__options").removeClass("container-navbar__expand")
         }
+    });
+
+    $.ajax({
+        url: "https://personal-website-justin.herokuapp.com/briefDescription/",
+        success: function(brief) {
+            IntroPageBrief(brief);
+        }
+    });
+
+    $(".container-introPage__sideMenu__content").click(function() {
+        TagContentSelector(this);
     });
 });
 
-function cardFunction(courses) {
-    courses.map(course => {
-        console.log(course.id)
-        $('#cardsContainer').append('<div class="card"> \
-        <a id=' + course.id + ' class="card-color" href="#courseDetail"\
-        onclick="cardDescription(\'' + course.id + '\')"> </a> \
-        <div class="card-content"> \<h2>' + course.title + '</h2> \
-        <div class="card-content__other"> \
-        <div class="card-content__other--text">' + course.description + '</div> \
-        <button class="card-button">+</button></div></div></div>');
-        $("#" + course.id).css('background', course.color)
-    })
-};
+function navMobileView() {
+    if ($(".container-navbar__options").hasClass("container-navbar__expand")) {
+        //console.log("YES");
+        $(".container-navbar__options").removeClass("container-navbar__expand")
+    } else {
+        //console.log("NO");
+        $(".container-navbar__options").addClass("container-navbar__expand")
+    }
 
-function nameTagFunction(people) {
-    people.map(item => {
-        $("#nameCard").append("<div class='container-card__content__individual'> \
-        <div class='container-name__banner'> \
-        <h3>" + item.title + "" + '&nbsp' + "" + item.name + "</h3></div> \
-        <div class='container-namecard'> \
-        <div id=" + item.id + " class='container-namecard__color'></div> \
-        <div class='container-namecard__content'> \
-        <p>" + item.username + "</p> </div> </div></div></div>");
-        $("#" + item.id).css('background', item.color)
-    })
-};
+    $(".container-navbar__options__buttons").each(function(index, listItem) {
+        //console.log(`div${index}: ${this.id}`);
 
-function cardDescription(detail) {
-    $.ajax({
-        url: "https://justin-course-project.herokuapp.com/course/" + detail,
-        success: function(detailPage) {
-            $(".container-card__detail").remove();
-            $(".container-main").after("<div id='courseDetail' class='container-card__detail'> \
-            <div class = 'card-detail__color'> </div> \
-            <div class = 'card-detail__content'> \
-            <div class = 'card-detail__title'> " + detailPage.title + " </div> \
-            <div class = 'card-detail__description' > " + detailPage.detailDescription + " </div> \
-            </div> </div>");
-            $('#courseDetail').css('background', detailPage.color);
-            var color = detailPage.color;
-            // console.log(color)
-            // console.log(color.localeCompare("black"))
-            if ((color.localeCompare("black") == 0) || (color.localeCompare("red") == 0)) {
-                $('.card-detail__title').css('color', 'white')
-                $('.card-detail__description').css('color', 'white')
-            } else if (color.localeCompare("white") == 0) {
-                $('.card-detail__title').css('color', 'black')
-                $('.card-detail__description').css('color', 'black')
-            }
+        if (!$("#" + this.id).is(":animated")) {
+            $("#" + this.id).animate({
+                opacity: '1',
+                transform: 'translateX(0%)'
+            }, 3000);
         }
     })
 };
 
-function displayValueAll() {
-    var title = $("#input-title").val();
-    $("#result-title").html(title);
-    var description = $("#input-description").val();
-    $("#result-description").html(description);
-    var category = $("#input-category").val();
-    $("#result-category").html(category);
-    var color = $("#input-color").val();
-    $("#result-color").html(color);
-    var detailedDescription = $("#input-detailed-description").val();
-    $("#result-detailed-description").html(detailedDescription);
-    var user = $('input[name=user]:checked').val()
-    $("#result-user").html(user);
-
-    $.post("https://justin-course-project.herokuapp.com/course", {
-        "title": title,
-        "description": description,
-        "detailDescription": "un phénomène inexpliqué et inexplicable que personne n’a sans doute oublié. Sans parler des rumeurs qui agitaient les populations des ports et surexcitaient l’esprit public à l’intérieur des continents, les gens de mer furent particulièrement émus. ",
-        "color": color
+function IntroPageBrief(brief) {
+    brief.map(briefDescription => {
+        //console.log(briefDescription.content)
+        $('#briefIntro').text(briefDescription.content)
     })
+}
+
+function TagContentSelector(entity) {
+    if (entity.id == ("firstTag")) {
+        $(".container-introPage__aboutTag").children().show();
+        $(".container-introPage__eduTag").children().empty();
+        $(".container-introPage__expTag").children().empty();
+        $(".container-introPage__codeTag").css("display", "none");
+    } else if (entity.id == ("eduTag")) {
+        $.ajax({
+            url: "https://personal-website-justin.herokuapp.com/education/",
+            success: function(eduHistory) {
+                $(".container-introPage__aboutTag").children().hide();
+                $(".container-introPage__eduTag").children().empty();
+                $(".container-introPage__expTag").children().empty();
+                $(".container-introPage__codeTag").css("display", "none");
+                eduHistory.map(education => {
+                    $("#eduList").append("<li class='container-introPage__eduTag__item__title'>" + education.title + "</li> \
+                    <li class='container-introPage__eduTag__item__description'>" + education.description + "</li> \
+                    <li class='container-introPage__eduTag__item__detail'>" + education.detailedDescription + "</li>")
+                })
+            }
+        })
+    } else if (entity.id == ("expTag")) {
+        $.ajax({
+            url: "https://personal-website-justin.herokuapp.com/experience/",
+            success: function(workExp) {
+                $(".container-introPage__aboutTag").children().hide();
+                $(".container-introPage__eduTag").children().empty();
+                $(".container-introPage__expTag").children().empty();
+                $(".container-introPage__codeTag").css("display", "none");
+                workExp.map(experience => {
+                    $("#expList").append("<li class='container-introPage__expTag__item__company'>" + experience.company + "</li> \
+                    <li class='container-introPage__expTag__item__duration'>" + experience.duration + "</li> \
+                    <li class='container-introPage__expTag__item__title'>" + experience.title + "</li> \
+                    <li class='container-introPage__expTag__item__duty'>" + experience.duty + "</li>")
+                })
+            }
+        })
+    } else if (entity.id == ("codeTag")) {
+        $(".container-introPage__aboutTag").children().hide();
+        $(".container-introPage__eduTag").children().empty();
+        $(".container-introPage__expTag").children().empty();
+        $(".container-introPage__codeTag").css("display", "flex");
+    }
 }

@@ -1,22 +1,26 @@
+/*********************
+*media queries
+***********************/
+
 @import "./_variable.scss";
-@mixin MQ ($canvas) {
+@mixin MQ($canvas) {
     @if $canvas==S {
-        @media only screen and (max-width: $S) {
+        @media screen and (max-width: $S) {
             @content;
         }
     }
-    @if $canvas==M {
-        @media only screen and (max-width: $M) {
+    @else if $canvas==M {
+        @media screen and (max-width: $M) {
             @content;
         }
     }
-    @if $canvas==L {
-        @media only screen and (max-width: $L) {
+    @else if $canvas==L {
+        @media screen and (max-width: $L) {
             @content;
         }
     }
-    @if $canvas==XL {
-        @media only screen and (max-width: $XL) {
+    @else if $canvas==XL {
+        @media screen and (max-width: $XL) {
             @content;
         }
     }
